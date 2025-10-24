@@ -2,14 +2,14 @@ import SwiftUI
 
 @main
 struct MyFinApp: App {
-    @StateObject private var router = AppRouter()  // @StateObject для ObservableObject
+    @StateObject private var router = AppRouter() 
 
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
                 if router.isOnboarding {
                     OnBoardingView()
-                        .environmentObject(router)  // .environmentObject для ObservableObject
+                        .environmentObject(router)
                 } else {
                     RootView()
                         .navigationDestination(for: Route.self) { route in

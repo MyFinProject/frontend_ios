@@ -9,5 +9,5 @@ enum Route: Hashable, Identifiable {
     case walletCreate
     case logoutConfirm
 
-    var id: Self { self }  // Для sheet (Identifiable)
+    var id: Self { self } 
 }

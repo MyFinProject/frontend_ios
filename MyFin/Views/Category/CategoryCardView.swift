@@ -16,7 +16,7 @@ struct CategoryCardView: View {
                 Text("ограничение:\(limitation)")
                 
                 Button {
-                    // Edit
+                    //
                 } label: {
                     Image(systemName: "pencil")
                 }

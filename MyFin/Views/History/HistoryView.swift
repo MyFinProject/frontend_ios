@@ -43,10 +43,10 @@ struct HistoryView: View {
                         .foregroundStyle(.fontApp)
                         .frame(width: 87, height: 32)
                         .font(.system(size: 20, weight: .regular))
-                        .cornerRadius(10) // Скругление углов
+                        .cornerRadius(10)
                         .overlay(
                             RoundedRectangle(cornerRadius: 10)
-                                .stroke(.fontApp, lineWidth: 2) // Синяя обводка, толщина 2
+                                .stroke(.fontApp, lineWidth: 2)
                         )
                     }
 
@@ -124,21 +124,21 @@ struct HistoryView: View {
                         Text("Удалить кошелек")
                             .font(.system(size: 36, weight: .medium))
                             .foregroundStyle(.fontApp)
-                            .cornerRadius(10) // Скругление углов
+                            .cornerRadius(10) 
                             .overlay(
                                 RoundedRectangle(cornerRadius: 10)
-                                    .stroke(.fontApp, lineWidth: 2) // Синяя обводка, толщина 2
+                                    .stroke(.fontApp, lineWidth: 2)
                             )
                     }
                 }
 
             }
         }
-        .navigationBarBackButtonHidden(true)  // ← Убирает back-стрелку
-        .toolbar(.hidden, for: .tabBar)  // ← Убирает таб-бар снизу, если он есть
-        .sheet(isPresented: $showLogoutConfirm) {  // <-- Добавьте: модальное окно
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
+        .sheet(isPresented: $showLogoutConfirm) {
             LogoutConfirmView()
-                        .environmentObject(router)  // Передача модели
+                        .environmentObject(router)
                 }
     }
 }

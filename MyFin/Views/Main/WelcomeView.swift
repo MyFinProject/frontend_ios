@@ -27,10 +27,10 @@ struct WelcomeView: View {
                             .font(.system(size: 20))
                             .frame(width: 240, height: 50)
                             .foregroundStyle(.fontApp)
-                            .cornerRadius(10) // Скругление углов
+                            .cornerRadius(10) 
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 10)
-                                                    .stroke(.fontApp, lineWidth: 2) // Синяя обводка, толщина 2
+                                                    .stroke(.fontApp, lineWidth: 2)
                                             )
 //                            .clipShape(.rect(cornerRadius: 30))
 //                            .border(Color.black, width: 2)
@@ -46,7 +46,7 @@ struct WelcomeView: View {
                             .cornerRadius(10) // Скругление углов
                                             .overlay(
                                                 RoundedRectangle(cornerRadius: 10)
-                                                    .stroke(.fontApp, lineWidth: 2) // Синяя обводка, толщина 2
+                                                    .stroke(.fontApp, lineWidth: 2)
                                             )
                     }
 
@@ -55,8 +55,8 @@ struct WelcomeView: View {
             }
             
         }
-        .navigationBarBackButtonHidden(true)  // ← Убирает back-стрелку
-        .toolbar(.hidden, for: .tabBar)  // ← Убирает таб-бар снизу, если он есть
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
     }

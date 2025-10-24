@@ -78,8 +78,8 @@ struct LoginView: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden(true)  // ← Убирает back-стрелку
-        .toolbar(.hidden, for: .tabBar)  // ← Убирает таб-бар снизу, если он есть
+        .navigationBarBackButtonHidden(true) 
+        .toolbar(.hidden, for: .tabBar)
         .frame(maxWidth: .infinity, maxHeight: .infinity)
         .ignoresSafeArea()
         .navigationBarTitleDisplayMode(.inline)
