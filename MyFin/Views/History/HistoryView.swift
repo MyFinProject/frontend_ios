@@ -1,148 +1,117 @@
-//
-//  ContentView7.swift
-//  проект
-//
-//  Created by Михаил Полозов on 03.10.2025.
-//
-
 import SwiftUI
 
 struct HistoryView: View {
     @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var authVM: AuthViewModel
+    @EnvironmentObject var historyVM: HistoryViewModel
+
     @State private var showLogoutConfirm = false
+
     var body: some View {
         ZStack {
             Image(.blur1)
             VStack(spacing: 60) {
+                // Header
                 HStack(spacing: 95) {
                     Text("MyFin")
                         .foregroundStyle(.fontApp)
                         .font(.system(size: 36, weight: .medium))
-                    
-                    
+
                     HStack(spacing: 18) {
-                        Button {
-                            router.showHome()
-                        } label: {
+                        Button { router.showHome() } label: {
                             Text("ЛК")
                         }
                         .foregroundStyle(.fontApp)
                         .frame(width: 37, height: 32)
                         .font(.system(size: 20, weight: .regular))
                         .cornerRadius(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(.fontApp, lineWidth: 2)
-                        )
-                        
-                        Button {
-                            showLogoutConfirm = true
-                        } label: {
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(.fontApp, lineWidth: 2))
+
+                        Button { showLogoutConfirm = true } label: {
                             Text("Выйти")
                         }
                         .foregroundStyle(.fontApp)
                         .frame(width: 87, height: 32)
                         .font(.system(size: 20, weight: .regular))
                         .cornerRadius(10)
-                        .overlay(
-                            RoundedRectangle(cornerRadius: 10)
-                                .stroke(.fontApp, lineWidth: 2)
-                        )
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(.fontApp, lineWidth: 2))
                     }
-
-
                 }
+
+                // Card с балансом выбранного кошелька (пока статично)
                 VStack(spacing: 10) {
                     VStack(alignment: .center, spacing: 32) {
-                        Text("Сбербанк")
-                            .font(.system(size: 36, weight: .bold))
-                        
+                        Text("Сбербанк").font(.system(size: 36, weight: .bold))
                         HStack(spacing: 69) {
-                            Text("Баланс:")
-                                .font(.system(size: 24, weight: .bold))
-                            
-                            
-                            HStack (spacing: 1){
-                                
-                                Text("23000")
-                                
+                            Text("Баланс:").font(.system(size: 24, weight: .bold))
+                            HStack(spacing: 1){
+                                Text("—")
                                 Image(systemName: "rublesign")
                             }
                             .font(.system(size: 24, weight: .bold))
                         }
-                        
                         HStack(spacing: 7) {
-                            Button {
-                                //
-                            } label: {
-                                Text("+ доходы")
-                            }
-                            .padding(.horizontal, 32)
-                            .padding(.vertical, 7)
-                            .background(._1111)
-                            .cornerRadius(10)
-                            .font(.system(size: 20))
-                            .foregroundStyle(.black)
-                            
-                            
-                            Button {
-                                //
-                            } label: {
-                                Text("- доходы")
-                            }
-                            .padding(.horizontal, 32)
-                            .padding(.vertical, 7)
-                            .background(._1111)
-                            .cornerRadius(10)
-                            .font(.system(size: 20))
-                            .foregroundStyle(.black)
-                            
+                            Button { /* фильтр доходов */ } label: { Text("+ доходы") }
+                                .padding(.horizontal, 32).padding(.vertical, 7)
+                                .background(._1111).cornerRadius(10)
+                                .font(.system(size: 20)).foregroundStyle(.black)
+
+                            Button { /* фильтр расходов */ } label: { Text("- расходы") }
+                                .padding(.horizontal, 32).padding(.vertical, 7)
+                                .background(._1111).cornerRadius(10)
+                                .font(.system(size: 20)).foregroundStyle(.black)
                         }
                     }
-                    //.frame(maxWidth: .infinity)
-                    .padding(.horizontal, 22)
-                    .padding(.vertical, 42)
-                    
-                    //.frame(width: 379, height: 218)
-                    .background(.fontApp)
-                    .cornerRadius(25)
-                    
+                    .padding(.horizontal, 22).padding(.vertical, 42)
+                    .background(.fontApp).cornerRadius(25)
+
                     Text("История")
                         .font(.system(size: 36, weight: .bold))
                         .foregroundStyle(.fontApp)
-                    
-                    VStack {
-                        
+
+                    // Список транзакций
+                    ScrollView {
+                        VStack(alignment: .leading, spacing: 12) {
+                            ForEach(historyVM.transactions, id: \.id) { tx in
+                                HStack {
+                                    Text(tx.description ?? "")
+                                        .font(.system(size: 18))
+                                    Spacer()
+                                    Text("\(tx.typeOperation == 3 ? "+" : "-")\(Int(tx.amount))")
+                                        .font(.system(size: 18, weight: .semibold))
+                                }
+                                .padding(.horizontal)
+                                .padding(.vertical, 8)
+                                .background(Color.white.opacity(0.08))
+                                .cornerRadius(12)
+                            }
+                            if historyVM.transactions.isEmpty {
+                                Text("Нет транзакций")
+                                    .foregroundStyle(.secondary)
+                            }
+                        }
+                        .padding()
                     }
                     .frame(width: 386, height: 319)
                     .background(.fontApp)
                     .cornerRadius(25)
-                    
-                    Button {
-                        //
-                    } label: {
+
+                    Button { /* удалить кошелёк */ } label: {
                         Text("Удалить кошелек")
                             .font(.system(size: 36, weight: .medium))
                             .foregroundStyle(.fontApp)
-                            .cornerRadius(10) 
-                            .overlay(
-                                RoundedRectangle(cornerRadius: 10)
-                                    .stroke(.fontApp, lineWidth: 2)
-                            )
+                            .cornerRadius(10)
+                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(.fontApp, lineWidth: 2))
                     }
                 }
-
             }
         }
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
-        .sheet(isPresented: $showLogoutConfirm) {
-            LogoutConfirmView()
-                        .environmentObject(router)
-                }
+        .onAppear { historyVM.onAppear() }
+        .alert("Выйти из аккаунта?", isPresented: $showLogoutConfirm) {
+            Button("Выйти", role: .destructive) { authVM.logout() }
+            Button("Отмена", role: .cancel) { }
+        }
     }
-}
-
-#Preview {
-    HistoryView()
 }
