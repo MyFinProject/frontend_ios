@@ -2,6 +2,8 @@ import SwiftUI
 
 struct RegisterView: View {
     @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var authVM: AuthViewModel
+    
     @State private var email: String = ""
     @State private var username: String = ""
     @State private var password: String = ""
@@ -62,10 +64,17 @@ struct RegisterView: View {
                             )
                     }
                     
+                    if let err = authVM.errorMessage {
+                        Text(err).foregroundColor(.red)
+                    }
+                    
                     Button {
-                        router.performRegister()
+                        authVM.username = username
+                        authVM.email = email
+                        authVM.password = password
+                        authVM.register()
                     } label: {
-                        Text("ЗАРЕГИСТРИРОВАТЬСЯ")
+                        Text(authVM.isLoading ? "Регистрируем..." : "Создать аккаунт")
                             .frame(width: 215, height: 35)
                             .foregroundStyle(.fontApp)
                             .cornerRadius(10)

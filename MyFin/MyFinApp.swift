@@ -2,54 +2,42 @@ import SwiftUI
 
 @main
 struct MyFinApp: App {
-    @StateObject private var router = AppRouter() 
+    @StateObject private var router: AppRouter
+    @StateObject private var authVM: AuthViewModel
+
+    init() {
+        // создаём всё локально, чтобы не захватывать self
+        let router = AppRouter()
+        let service: AuthServiceProtocol = MockAuthService()
+
+        _router = StateObject(wrappedValue: router)
+        _authVM = StateObject(wrappedValue: AuthViewModel(auth: service, router: router))
+    }
 
     var body: some Scene {
         WindowGroup {
             NavigationStack(path: $router.path) {
                 if router.isOnboarding {
                     OnBoardingView()
-                        .environmentObject(router)
                 } else {
-                    RootView()
-                        .navigationDestination(for: Route.self) { route in
-                            destination(for: route)
-                        }
+                    WelcomeView()
+                        .navigationDestination(for: Route.self, destination: destination(for:))
                 }
             }
-            .navigationBarBackButtonHidden(true)
-            .environmentObject(router)  // Глобально
-            .sheet(item: $router.presentedSheet) { route in
-                if route == .logoutConfirm {
-                    LogoutConfirmView()
-                        .environmentObject(router)
-                }
-            }
-        }
-    }
-
-    @ViewBuilder
-    private func RootView() -> some View {
-        if router.path.isEmpty {
-            WelcomeView()
-                .environmentObject(router)
+            .environmentObject(router)
+            .environmentObject(authVM)
         }
     }
 
     @ViewBuilder
     private func destination(for route: Route) -> some View {
         switch route {
-        case .main: WelcomeView().environmentObject(router)
-        case .login: LoginView().environmentObject(router)
-        case .register: RegisterView().environmentObject(router)
-        case .home: HomeView().environmentObject(router)
-        case .history: HistoryView().environmentObject(router)
-        //case .walletCreate: WalletCreateView().environmentObject(router)
-        default: EmptyView()
+        case .main:       WelcomeView()
+        case .login:      LoginView()
+        case .register:   RegisterView()
+        case .home:       HomeView()
+        case .history:    HistoryView()
+        default:          EmptyView()
         }
     }
 }
-
-//#Preview {
-//    MyFinApp()
-//}

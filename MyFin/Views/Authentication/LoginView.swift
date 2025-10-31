@@ -2,9 +2,12 @@ import SwiftUI
 
 struct LoginView: View {
     @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var authVM: AuthViewModel
+    
     @State private var email: String = ""
     @State private var username: String = ""
     @State private var password: String = ""
+    
 
     var body: some View {
         ZStack {
@@ -45,10 +48,16 @@ struct LoginView: View {
                             .cornerRadius(10)
                     }
                     
+                    if let err = authVM.errorMessage {
+                        Text(err).foregroundColor(.red)
+                    }
+                    
                     Button {
-                        router.performLogin()
+                        authVM.email = email
+                        authVM.password = password
+                        authVM.login()
                     } label: {
-                        Text("ВОЙТИ")
+                        Text(authVM.isLoading ? "Входим..." : "Войти")
                             .frame(width: 215, height: 35)
                             .foregroundStyle(.fontApp)
                             .cornerRadius(10)
