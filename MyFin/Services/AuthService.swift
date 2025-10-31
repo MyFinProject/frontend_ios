@@ -29,7 +29,9 @@ protocol AuthServiceProtocol: AnyObject {
 
 final class MockAuthService: AuthServiceProtocol {
     private var users: [String: (user: User, password: String)] = [
-        "demo@myfin.app": (User(username: "Demo", email: "demo@myfin.app", userId: "u_demo"), "123456")
+
+        "demo@myfin.app": (User(username: "Demo1", email: "demo@myfin.app", userId: "u_demo_1"), "123456"),
+        "mihpolozov@gmail.com": (User(username: "Demo2", email: "mihpolozov@gmail.com", userId: "u_demo_2"), "12345678")
     ]
 
     private(set) var currentUser: User?

@@ -2,6 +2,8 @@ import SwiftUI
 
 struct HomeView:    View {
     @EnvironmentObject var router: AppRouter
+    @EnvironmentObject var authVM: AuthViewModel
+    
     @State private var showLogoutConfirm = false
     var body: some View {
         ZStack {
@@ -31,7 +33,7 @@ struct HomeView:    View {
                         
                         
                         Button {
-                            router.showLogoutConfirm()
+                            showLogoutConfirm = true
                         } label: {
                             Text("Выйти")
                                 .foregroundStyle(.fontApp)
