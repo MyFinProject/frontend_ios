@@ -15,15 +15,12 @@ protocol WalletServiceProtocol: AnyObject {
 
 final class MockWalletService: WalletServiceProtocol {
 
-    // Простая задержка «как сеть»
     private func simulateDelay() async { try? await Task.sleep(nanoseconds: 300_000_000) }
 
-    // In-memory стор
     private var walletsByUser: [String: [Wallet]] = [:]
     private var transactionsByUser: [String: [Transaction]] = [:]
 
     init() {
-        // демо-данные на обоих демо-пользователей
         seed(userId: "u_demo_1")
         seed(userId: "u_demo_2")
     }

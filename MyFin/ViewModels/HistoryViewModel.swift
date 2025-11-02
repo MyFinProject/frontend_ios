@@ -7,7 +7,6 @@ final class HistoryViewModel: ObservableObject {
     @Published var isLoading = false
     @Published var errorMessage: String?
 
-    // ⬇️ сюда будем записывать выбранный кошелёк
     @Published var selectedWalletId: String?
 
     private let walletService: WalletServiceProtocol
@@ -28,7 +27,6 @@ final class HistoryViewModel: ObservableObject {
         Task {
             defer { isLoading = false }
             do {
-                // ⬇️ если selectedWalletId == nil — загрузим все, иначе фильтр по кошельку
                 transactions = try await walletService.fetchTransactions(for: selectedWalletId, userId: userId)
             } catch {
                 errorMessage = error.localizedDescription

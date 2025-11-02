@@ -6,17 +6,28 @@ struct MyFinApp: App {
     @StateObject private var authVM: AuthViewModel
     @StateObject private var homeVM: HomeViewModel
     @StateObject private var historyVM: HistoryViewModel
+    @StateObject private var budgetVM: BudgetViewModel
 
     init() {
-        // создаём всё локально, чтобы не захватывать self
         let router = AppRouter()
         let authService: AuthServiceProtocol = MockAuthService()
         let walletService: WalletServiceProtocol = MockWalletService()
+        let categoryService: CategoryServiceProtocol = MockCategoryService()
+        let budgetService: BudgetServiceProtocol = MockBudgetService()
 
         _router = StateObject(wrappedValue: router)
-        _authVM = StateObject(wrappedValue: AuthViewModel(auth: authService, router: router))
-        _homeVM = StateObject(wrappedValue: HomeViewModel(walletService: walletService, authService: authService, router: router))
+        _authVM = StateObject(wrappedValue: AuthViewModel(auth: authService,
+                                                          router: router))
+        _homeVM = StateObject(wrappedValue: HomeViewModel(walletService: walletService,
+                                                          authService: authService,
+                                                          router: router))
         _historyVM = StateObject(wrappedValue: HistoryViewModel(walletService: walletService, authService: authService))
+
+
+        _budgetVM = StateObject(wrappedValue: BudgetViewModel(budgetsService: budgetService,
+                                                              categoriesService: categoryService,
+                                                              authService: authService))
+
             
     }
 
@@ -32,6 +43,8 @@ struct MyFinApp: App {
             }
             .environmentObject(router)
             .environmentObject(authVM)
+            .environmentObject(budgetVM)
+
         }
     }
 
@@ -58,14 +71,19 @@ struct MyFinApp: App {
                 .environmentObject(router)
                 .environmentObject(authVM)
                 .environmentObject(homeVM)
-                .environmentObject(historyVM)   // ← важно
-                .onAppear { homeVM.onAppear() }
+                .environmentObject(historyVM)
+                .environmentObject(budgetVM)
+                .onAppear {
+                    homeVM.onAppear()
+                    budgetVM.onAppear()
+                }
+
 
         case .history:
             HistoryView()
                 .environmentObject(router)
                 .environmentObject(authVM)
-                .environmentObject(historyVM)     // ← важно
+                .environmentObject(historyVM)
                 .onAppear { historyVM.onAppear() }
 
         default:

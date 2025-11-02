@@ -11,7 +11,6 @@ struct HistoryView: View {
         ZStack {
             Image(.blur1)
             VStack(spacing: 60) {
-                // Header
                 HStack(spacing: 95) {
                     Text("MyFin")
                         .foregroundStyle(.fontApp)
@@ -38,7 +37,6 @@ struct HistoryView: View {
                     }
                 }
 
-                // Card с балансом выбранного кошелька (пока статично)
                 VStack(spacing: 10) {
                     VStack(alignment: .center, spacing: 32) {
                         Text("Сбербанк").font(.system(size: 36, weight: .bold))
@@ -69,7 +67,6 @@ struct HistoryView: View {
                         .font(.system(size: 36, weight: .bold))
                         .foregroundStyle(.fontApp)
 
-                    // Список транзакций
                     ScrollView {
                         VStack(alignment: .leading, spacing: 12) {
                             ForEach(historyVM.transactions, id: \.id) { tx in

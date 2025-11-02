@@ -1,7 +1,5 @@
 import Foundation
 
-// MARK: - Contracts
-
 enum AuthError: LocalizedError, Equatable {
     case invalidCredentials
     case emailAlreadyTaken
@@ -38,7 +36,6 @@ final class MockAuthService: AuthServiceProtocol {
 
     var isAuthenticated: Bool { currentUser != nil }
 
-    // имитация сетевой задержки
     private func simulateDelay() async {
         try? await Task.sleep(nanoseconds: 500_000_000) // 0.5s
     }

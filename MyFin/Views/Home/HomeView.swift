@@ -5,6 +5,10 @@ struct HomeView: View {
     @EnvironmentObject var authVM: AuthViewModel
     @EnvironmentObject var homeVM: HomeViewModel
     @EnvironmentObject var historyVM: HistoryViewModel
+    @EnvironmentObject var budgetVM: BudgetViewModel
+    
+    @State private var showAddCategory = false
+
 
 
     @State private var showLogoutConfirm = false
@@ -13,7 +17,6 @@ struct HomeView: View {
         ZStack {
             Image(.blur1)
             VStack {
-                // Header
                 HStack(spacing: 50) {
                     Text("MyFin")
                         .foregroundStyle(.fontApp)
@@ -44,9 +47,7 @@ struct HomeView: View {
                     }
                 }
 
-                // Content
                 VStack(spacing: 17) {
-                    // Баланс
                     ZStack {
                         VStack {
                             HStack(alignment: .top){
@@ -95,7 +96,6 @@ struct HomeView: View {
                     .background(.fonWindow)
                     .cornerRadius(12)
 
-                    // Кошельки
                     ZStack {
                         VStack {
                             Text("Кошельки и счета")
@@ -107,13 +107,12 @@ struct HomeView: View {
                                     HStack(spacing: 20) {
                                         ForEach(homeVM.wallets, id: \.walletId) { wallet in
                                             Button {
-                                                // запоминаем выбранный кошелёк и переходим в Историю
                                                 historyVM.selectedWalletId = wallet.walletId
                                                 router.showHistory()
                                             } label: {
                                                 WalletCardView(wallet: wallet)
                                             }
-                                            .buttonStyle(.plain) // чтобы не менять внешний вид
+                                            .buttonStyle(.plain)
                                         }
                                     }
                                     .padding(36)
@@ -134,31 +133,47 @@ struct HomeView: View {
                     .background(.fonWindow2)
                     .cornerRadius(12)
 
-                    // Бюджет (пока мок, как у тебя)
                     ZStack {
                         VStack {
                             Text("Бюджет")
                                 .padding()
                                 .font(Font.system(size: 36, weight: .bold))
 
+                            if let err = budgetVM.errorMessage {
+                                Text(err).foregroundColor(.red)
+                            }
+
                             ScrollView(showsIndicators: false) {
-                                ForEach(0..<10, id: \.self) { num in
-                                    CategoryCardView(number: num, name: "dddd", limitation: 5000)
+                                VStack(spacing: 8) {
+                                    ForEach(Array(budgetVM.budgets.enumerated()), id: \.element.id) { (idx, budget) in
+                                        CategoryCardView(number: idx,
+                                                         name: budget.name,
+                                                         limitation: Int(budget.amount))
+                                    }
                                 }
                             }
                             .frame(width: 370)
 
-                            Button { /* добавить категорию */ } label: {
+                            Button {
+                                showAddCategory = true
+                            } label: {
                                 Text("Добавить категорию")
                                     .font(.system(size: 20, weight: .semibold))
                                     .foregroundStyle(.fontApp)
                                     .padding()
                             }
+                            .sheet(isPresented: $showAddCategory) {
+                                AddCategoryView { name, amount in
+                                    budgetVM.createBudgetWithNewCategory(name: name, amount: amount)
+                                }
+                            }
+
                         }
                     }
                     .frame(width: 384, height: 300)
                     .background(.fonWindow2)
                     .cornerRadius(12)
+
                 }
             }
         }
