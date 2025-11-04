@@ -6,7 +6,20 @@ struct HistoryView: View {
     @EnvironmentObject var historyVM: HistoryViewModel
 
     @State private var showLogoutConfirm = false
+    @State private var showAddTx = false
+    @State private var showPickWalletAlert = false
 
+    private func chip(_ title: String, active: Bool) -> some View {
+        Text(title)
+            //.padding(.horizontal, 32)
+            //.padding(.vertical, 7)
+            .background(active ? Color._1111.opacity(0.9) : Color._1111.opacity(0.5))
+            .cornerRadius(10)
+            .font(.system(size: 20))
+            .foregroundStyle(.black)
+    }
+
+    
     var body: some View {
         ZStack {
             Image(.blur1)
@@ -26,6 +39,21 @@ struct HistoryView: View {
                         .cornerRadius(10)
                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(.fontApp, lineWidth: 2))
 
+                        Button {
+                            if historyVM.selectedWalletId == nil {
+                                showPickWalletAlert = true
+                            } else {
+                                showAddTx = true
+                            }
+                        } label: {
+                            Image(systemName: "plus")
+                            .frame(width: 37, height: 32)
+                        }
+                        .foregroundStyle(.fontApp)
+                        .cornerRadius(10)
+                        .overlay(RoundedRectangle(cornerRadius: 10).stroke(.fontApp, lineWidth: 2))
+                        
+                        
                         Button { showLogoutConfirm = true } label: {
                             Text("Выйти")
                         }
@@ -49,15 +77,30 @@ struct HistoryView: View {
                             .font(.system(size: 24, weight: .bold))
                         }
                         HStack(spacing: 7) {
-                            Button { /* фильтр доходов */ } label: { Text("+ доходы") }
-                                .padding(.horizontal, 32).padding(.vertical, 7)
-                                .background(._1111).cornerRadius(10)
-                                .font(.system(size: 20)).foregroundStyle(.black)
+                            HStack(spacing: 7) {
+                                Button {
+                                    historyVM.toggleFilter(.income)
+                                } label: {
+                                    chip("+ доходы", active: historyVM.filter == .income)
+                                }
+                                .buttonStyle(.plain)
 
-                            Button { /* фильтр расходов */ } label: { Text("- расходы") }
-                                .padding(.horizontal, 32).padding(.vertical, 7)
-                                .background(._1111).cornerRadius(10)
-                                .font(.system(size: 20)).foregroundStyle(.black)
+                                Button {
+                                    historyVM.toggleFilter(.expense)
+                                } label: {
+                                    chip("- расходы", active: historyVM.filter == .expense)
+                                }
+                                .buttonStyle(.plain)
+
+                                Button {
+                                    historyVM.clearFilter()
+                                } label: {
+                                    chip("Все", active: historyVM.filter == .all)
+                                }
+                                .buttonStyle(.plain)
+                            }
+
+
                         }
                     }
                     .padding(.horizontal, 22).padding(.vertical, 42)
@@ -69,7 +112,7 @@ struct HistoryView: View {
 
                     ScrollView {
                         VStack(alignment: .leading, spacing: 12) {
-                            ForEach(historyVM.transactions, id: \.id) { tx in
+                            ForEach(historyVM.visibleTransactions, id: \.id) { tx in
                                 HStack {
                                     Text(tx.description ?? "")
                                         .font(.system(size: 18))
@@ -82,7 +125,7 @@ struct HistoryView: View {
                                 .background(Color.white.opacity(0.08))
                                 .cornerRadius(12)
                             }
-                            if historyVM.transactions.isEmpty {
+                            if historyVM.visibleTransactions.isEmpty {
                                 Text("Нет транзакций")
                                     .foregroundStyle(.secondary)
                             }
@@ -103,12 +146,22 @@ struct HistoryView: View {
                 }
             }
         }
-        .navigationBarBackButtonHidden(true)
-        .toolbar(.hidden, for: .tabBar)
         .onAppear { historyVM.onAppear() }
+        .sheet(isPresented: $showAddTx) {
+            AddTransactionView { amount, desc, isIncome in
+                historyVM.addTransaction(amount: amount, description: desc, isIncome: isIncome)
+            }
+        }
+        .alert("Выберите кошелёк на главном экране, чтобы добавить транзакцию",
+               isPresented: $showPickWalletAlert) {
+            Button("Ок", role: .cancel) { }
+        }
         .alert("Выйти из аккаунта?", isPresented: $showLogoutConfirm) {
             Button("Выйти", role: .destructive) { authVM.logout() }
             Button("Отмена", role: .cancel) { }
         }
+        .navigationBarBackButtonHidden(true)
+        .toolbar(.hidden, for: .tabBar)
     }
 }
+

@@ -1,13 +1,29 @@
 import Foundation
 import Combine
 
+enum TransactionFilter {
+    case all
+    case income
+    case expense
+}
+
 @MainActor
 final class HistoryViewModel: ObservableObject {
-    @Published var transactions: [Transaction] = []
+    @Published private(set) var transactions: [Transaction] = []
     @Published var isLoading = false
     @Published var errorMessage: String?
 
     @Published var selectedWalletId: String?
+
+    @Published var filter: TransactionFilter = .all
+
+    var visibleTransactions: [Transaction] {
+        switch filter {
+        case .all:     return transactions
+        case .income:  return transactions.filter { $0.typeOperation == 3 }
+        case .expense: return transactions.filter { $0.typeOperation == 1 }
+        }
+    }
 
     private let walletService: WalletServiceProtocol
     private let authService: AuthServiceProtocol
@@ -33,4 +49,35 @@ final class HistoryViewModel: ObservableObject {
             }
         }
     }
+
+    func addTransaction(amount: Double, description: String, isIncome: Bool) {
+        let userId = authService.currentUser?.userId ?? "u_demo_1"
+        guard let walletId = selectedWalletId else { return }
+        Task {
+            do {
+                let tx = Transaction(
+                    id: UUID().uuidString,
+                    amount: amount,
+                    description: description,
+                    date: ISO8601DateFormatter().string(from: Date()),
+                    typeOperation: isIncome ? 3 : 1,
+                    walletId: walletId
+                )
+                _ = try await walletService.addTransaction(tx, userId: userId)
+                transactions = try await walletService.fetchTransactions(for: selectedWalletId, userId: userId)
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    func toggleFilter(_ newFilter: TransactionFilter) {
+        if filter == newFilter {
+            filter = .all
+        } else {
+            filter = newFilter
+        }
+    }
+
+    func clearFilter() { filter = .all }
 }
