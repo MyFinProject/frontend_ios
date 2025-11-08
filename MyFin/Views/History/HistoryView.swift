@@ -67,11 +67,12 @@ struct HistoryView: View {
 
                 VStack(spacing: 10) {
                     VStack(alignment: .center, spacing: 32) {
-                        Text("Сбербанк").font(.system(size: 36, weight: .bold))
+                        Text(historyVM.selectedWalletName.isEmpty ? "Кошелёк" : historyVM.selectedWalletName)
+                                .font(.system(size: 36, weight: .bold))
                         HStack(spacing: 69) {
                             Text("Баланс:").font(.system(size: 24, weight: .bold))
                             HStack(spacing: 1){
-                                Text("—")
+                                Text("\(Int(historyVM.selectedWalletBalance))")    // ← сумма
                                 Image(systemName: "rublesign")
                             }
                             .font(.system(size: 24, weight: .bold))

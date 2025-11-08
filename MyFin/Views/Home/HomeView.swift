@@ -8,6 +8,7 @@ struct HomeView: View {
     @EnvironmentObject var budgetVM: BudgetViewModel
     
     @State private var showAddCategory = false
+    @State private var showAddWallet = false
 
 
 
@@ -118,7 +119,8 @@ struct HomeView: View {
                                     .padding(36)
                                 }
 
-                                Button { /* добавить кошелёк */ } label: {
+                                Button { showAddWallet = true }
+                                label: {
                                     ZStack {
                                         Circle().foregroundStyle(.fontApp).frame(width: 44, height: 44)
                                         Image(systemName: "plus").foregroundStyle(.black)
@@ -180,9 +182,18 @@ struct HomeView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .onAppear { homeVM.onAppear() }
+
         .alert("Выйти из аккаунта?", isPresented: $showLogoutConfirm) {
             Button("Выйти", role: .destructive) { authVM.logout() }
             Button("Отмена", role: .cancel) { }
         }
+
+
+        .sheet(isPresented: $showAddWallet) {
+            AddWalletView { name, balance, currencyId, icon in
+                homeVM.createWallet(name: name, balance: balance, currencyId: currencyId, icon: icon)
+            }
+        }
+
     }
 }

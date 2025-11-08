@@ -1,11 +1,7 @@
 import Foundation
 import Combine
 
-enum TransactionFilter {
-    case all
-    case income
-    case expense
-}
+enum TransactionFilter { case all, income, expense }
 
 @MainActor
 final class HistoryViewModel: ObservableObject {
@@ -15,8 +11,10 @@ final class HistoryViewModel: ObservableObject {
 
     @Published var selectedWalletId: String?
 
-    @Published var filter: TransactionFilter = .all
+    @Published var selectedWalletName: String = ""
+    @Published var selectedWalletBalance: Double = 0
 
+    @Published var filter: TransactionFilter = .all
     var visibleTransactions: [Transaction] {
         switch filter {
         case .all:     return transactions
@@ -44,9 +42,22 @@ final class HistoryViewModel: ObservableObject {
             defer { isLoading = false }
             do {
                 transactions = try await walletService.fetchTransactions(for: selectedWalletId, userId: userId)
+                try await updateSelectedWalletHeader(userId: userId)
             } catch {
                 errorMessage = error.localizedDescription
             }
+        }
+    }
+
+    private func updateSelectedWalletHeader(userId: String) async throws {
+        let wallets = try await walletService.fetchWallets(for: userId)
+        if let id = selectedWalletId,
+           let w = wallets.first(where: { $0.walletId == id }) {
+            selectedWalletName = w.name
+            selectedWalletBalance = w.balance
+        } else {
+            selectedWalletName = ""
+            selectedWalletBalance = 0
         }
     }
 
@@ -65,6 +76,7 @@ final class HistoryViewModel: ObservableObject {
                 )
                 _ = try await walletService.addTransaction(tx, userId: userId)
                 transactions = try await walletService.fetchTransactions(for: selectedWalletId, userId: userId)
+                try await updateSelectedWalletHeader(userId: userId)
             } catch {
                 errorMessage = error.localizedDescription
             }
@@ -72,12 +84,7 @@ final class HistoryViewModel: ObservableObject {
     }
 
     func toggleFilter(_ newFilter: TransactionFilter) {
-        if filter == newFilter {
-            filter = .all
-        } else {
-            filter = newFilter
-        }
+        filter = (filter == newFilter) ? .all : newFilter
     }
-
     func clearFilter() { filter = .all }
 }

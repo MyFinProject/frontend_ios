@@ -62,4 +62,22 @@ final class HomeViewModel: ObservableObject {
             router.performLogout()
         }
     }
+    
+    func createWallet(name: String, balance: Double, currencyId: Int = 840, icon: String? = "creditcard") {
+        let userId = authService.currentUser?.userId ?? "u_demo_1"
+        Task {
+            do {
+                let req = CreateWalletRequest(name: name, balance: balance, currencieId: currencyId, icon: icon)
+                _ = try await walletService.createWallet(req, userId: userId)
+                let updated = try await walletService.fetchWallets(for: userId)
+                self.wallets = updated
+                await recomputeTotals(userId: userId)
+            } catch {
+                self.errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+
+
 }
