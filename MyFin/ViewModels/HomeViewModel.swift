@@ -52,9 +52,7 @@ final class HomeViewModel: ObservableObject {
         }
     }
 
-
     func openHistory() { router.showHistory() }
-
 
     func logout() {
         Task {
@@ -62,7 +60,7 @@ final class HomeViewModel: ObservableObject {
             router.performLogout()
         }
     }
-    
+
     func createWallet(name: String, balance: Double, currencyId: Int = 840, icon: String? = "creditcard") {
         let userId = authService.currentUser?.userId ?? "u_demo_1"
         Task {
@@ -78,6 +76,20 @@ final class HomeViewModel: ObservableObject {
         }
     }
 
+    func deleteWallet(walletId: String) {
+        let userId = authService.currentUser?.userId ?? "u_demo_1"
+        isLoading = true
+        errorMessage = nil
 
-
+        Task {
+            defer { isLoading = false }
+            do {
+                try await walletService.deleteWallet(walletId: walletId, userId: userId)
+                wallets = try await walletService.fetchWallets(for: userId)
+                await recomputeTotals(userId: userId)
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
 }

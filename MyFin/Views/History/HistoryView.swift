@@ -72,7 +72,7 @@ struct HistoryView: View {
                         HStack(spacing: 69) {
                             Text("Баланс:").font(.system(size: 24, weight: .bold))
                             HStack(spacing: 1){
-                                Text("\(Int(historyVM.selectedWalletBalance))")    // ← сумма
+                                Text("\(Int(historyVM.selectedWalletBalance))")
                                 Image(systemName: "rublesign")
                             }
                             .font(.system(size: 24, weight: .bold))
@@ -136,16 +136,35 @@ struct HistoryView: View {
                     .frame(width: 386, height: 319)
                     .background(.fontApp)
                     .cornerRadius(25)
+                    .safeAreaInset(edge: .bottom) {
+                        Button {
+                            historyVM.deleteSelectedWallet()
+                        } label: {
+                            HStack(spacing: 8) {
+                                Image(systemName: "trash")
+                                    .font(.system(size: 18, weight: .semibold))
 
-                    Button { /* удалить кошелёк */ } label: {
-                        Text("Удалить кошелек")
-                            .font(.system(size: 36, weight: .medium))
+                                Text("Удалить кошелек")
+                                    .font(.system(size: 18, weight: .semibold))
+                            }
                             .foregroundStyle(.fontApp)
-                            .cornerRadius(10)
-                            .overlay(RoundedRectangle(cornerRadius: 10).stroke(.fontApp, lineWidth: 2))
+                            .padding(.vertical, 12)
+                            .frame(maxWidth: .infinity)
+                            .background(.clear)
+                            .overlay(
+                                RoundedRectangle(cornerRadius: 22)
+                                    .stroke(.fontApp, lineWidth: 2)
+                            )
+                        }
+                        .padding(.horizontal, 24)
+                        .padding(.bottom, 16)
                     }
+
+
+
                 }
             }
+            
         }
         .onAppear { historyVM.onAppear() }
         .sheet(isPresented: $showAddTx) {

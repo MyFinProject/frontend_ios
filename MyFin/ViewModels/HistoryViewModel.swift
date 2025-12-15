@@ -7,6 +7,7 @@ enum TransactionFilter { case all, income, expense }
 final class HistoryViewModel: ObservableObject {
     @Published private(set) var transactions: [Transaction] = []
     @Published var isLoading = false
+    @Published var isDeleting = false
     @Published var errorMessage: String?
 
     @Published var selectedWalletId: String?
@@ -18,8 +19,8 @@ final class HistoryViewModel: ObservableObject {
     var visibleTransactions: [Transaction] {
         switch filter {
         case .all:     return transactions
-        case .income:  return transactions.filter { $0.typeOperation == 3 }
-        case .expense: return transactions.filter { $0.typeOperation == 1 }
+        case .income:  return transactions.filter { $0.isIncome }
+        case .expense: return transactions.filter { $0.isExpense }
         }
     }
 
@@ -32,12 +33,16 @@ final class HistoryViewModel: ObservableObject {
         self.authService = authService
     }
 
-    func onAppear() { load() }
+
+    func onAppear() {
+        load()
+    }
 
     func load() {
         let userId = authService.currentUser?.userId ?? "u_demo_1"
         isLoading = true
         errorMessage = nil
+
         Task {
             defer { isLoading = false }
             do {
@@ -52,18 +57,20 @@ final class HistoryViewModel: ObservableObject {
     private func updateSelectedWalletHeader(userId: String) async throws {
         let wallets = try await walletService.fetchWallets(for: userId)
         if let id = selectedWalletId,
-           let w = wallets.first(where: { $0.walletId == id }) {
-            selectedWalletName = w.name
-            selectedWalletBalance = w.balance
+           let wallet = wallets.first(where: { $0.walletId == id }) {
+            selectedWalletName = wallet.name
+            selectedWalletBalance = wallet.balance
         } else {
             selectedWalletName = ""
             selectedWalletBalance = 0
         }
     }
 
+
     func addTransaction(amount: Double, description: String, isIncome: Bool) {
         let userId = authService.currentUser?.userId ?? "u_demo_1"
         guard let walletId = selectedWalletId else { return }
+
         Task {
             do {
                 let tx = Transaction(
@@ -74,6 +81,7 @@ final class HistoryViewModel: ObservableObject {
                     typeOperation: isIncome ? 3 : 1,
                     walletId: walletId
                 )
+
                 _ = try await walletService.addTransaction(tx, userId: userId)
                 transactions = try await walletService.fetchTransactions(for: selectedWalletId, userId: userId)
                 try await updateSelectedWalletHeader(userId: userId)
@@ -83,8 +91,32 @@ final class HistoryViewModel: ObservableObject {
         }
     }
 
+    func deleteSelectedWallet() {
+        guard let walletId = selectedWalletId else { return }
+
+        let userId = authService.currentUser?.userId ?? "u_demo_1"
+        isDeleting = true
+        errorMessage = nil
+
+        Task {
+            defer { isDeleting = false }
+
+            do {
+                try await walletService.deleteWallet(walletId: walletId, userId: userId)
+                selectedWalletId = nil
+                transactions = []
+                try await updateSelectedWalletHeader(userId: userId)
+            } catch {
+                errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+    // MARK: - Filters
+
     func toggleFilter(_ newFilter: TransactionFilter) {
         filter = (filter == newFilter) ? .all : newFilter
     }
+
     func clearFilter() { filter = .all }
 }

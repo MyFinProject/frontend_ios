@@ -6,12 +6,9 @@ struct HomeView: View {
     @EnvironmentObject var homeVM: HomeViewModel
     @EnvironmentObject var historyVM: HistoryViewModel
     @EnvironmentObject var budgetVM: BudgetViewModel
-    
+
     @State private var showAddCategory = false
     @State private var showAddWallet = false
-
-
-
     @State private var showLogoutConfirm = false
 
     var body: some View {
@@ -182,18 +179,14 @@ struct HomeView: View {
         .navigationBarBackButtonHidden(true)
         .toolbar(.hidden, for: .tabBar)
         .onAppear { homeVM.onAppear() }
-
         .alert("Выйти из аккаунта?", isPresented: $showLogoutConfirm) {
             Button("Выйти", role: .destructive) { authVM.logout() }
             Button("Отмена", role: .cancel) { }
         }
-
-
         .sheet(isPresented: $showAddWallet) {
             AddWalletView { name, balance, currencyId, icon in
                 homeVM.createWallet(name: name, balance: balance, currencyId: currencyId, icon: icon)
             }
         }
-
     }
 }
