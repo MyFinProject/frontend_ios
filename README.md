@@ -10,14 +10,15 @@
 | Скриншот | Описание |
 |----------|----------|
 | <img src="Screenshots/splash.png" width="300"> | **Splash / Welcome**<br><br>Стартовый экран приложения с брендингом MyFin и атмосферным фоном. |
-| <img src="LINK_AUTH" width="1000" style="display:block;margin:0 auto;"> | **Главный экран авторизации**<br><br>Выбор действия: вход или регистрация. |
-| <img src="LINK_LOGIN" width="1000" style="display:block;margin:0 auto;"> | **Вход**<br><br>Форма авторизации: почта и пароль, быстрый переход к регистрации. |
-| <img src="LINK_REGISTER" width="1000" style="display:block;margin:0 auto;"> | **Регистрация**<br><br>Создание аккаунта с базовыми полями (почта/логин/пароль). |
-| <img src="LINK_DASHBOARD" width="1000" style="display:block;margin:0 auto;"> | **Главная (Dashboard)**<br><br>Общий баланс, сводка по доходам/расходам/инвестициям, блок «Кошельки и счета», список бюджета по категориям. |
-| <img src="LINK_NEW_WALLET" width="1000" style="display:block;margin:0 auto;"> | **Создание кошелька**<br><br>Bottom-sheet форма для добавления нового кошелька/счета: название и начальный баланс. |
-| <img src="LINK_EDIT_CATEGORY" width="1000" style="display:block;margin:0 auto;"> | **Редактирование категории / лимита**<br><br>Экран/модальное окно для изменения названия категории и бюджетного ограничения. |
-| <img src="LINK_WALLET_DETAILS" width="1000" style="display:block;margin:0 auto;"> | **Кошелёк и история**<br><br>Детальная карточка кошелька: баланс, фильтры (доходы/расходы/все), список операций и действие удаления кошелька. |
-| <img src="LINK_NEW_TRANSACTION" width="1000" style="display:block;margin:0 auto;"> | **Новая транзакция**<br><br>Добавление операции: сумма, описание и переключатель «Это доход», кнопка сохранения. |
+| <img src="Screenshots/auth.png" width="300"> | **Главный экран авторизации**<br><br>Выбор действия: вход или регистрация. |
+| <img src="Screenshots/login.png" width="300"> | **Вход**<br><br>Форма авторизации: почта и пароль, быстрый переход к регистрации. |
+| <img src="Screenshots/register.png" width="300"> | **Регистрация**<br><br>Создание аккаунта с базовыми полями (почта/логин/пароль). |
+| <img src="Screenshots/dashboard.png" width="300"> | **Главная (Dashboard)**<br><br>Общий баланс, сводка по доходам/расходам/инвестициям, блок «Кошельки и счета», список бюджета по категориям. |
+| <img src="Screenshots/new_wallet.png" width="300"> | **Создание кошелька**<br><br>Bottom-sheet форма для добавления нового кошелька/счета: название и начальный баланс. |
+| <img src="Screenshots/edit_category.png" width="300"> | **Редактирование категории / лимита**<br><br>Экран/модальное окно для изменения названия категории и бюджетного ограничения. |
+| <img src="Screenshots/wallet_details.png" width="300"> | **Кошелёк и история**<br><br>Детальная карточка кошелька: баланс, фильтры (доходы/расходы/все), список операций и действие удаления кошелька. |
+| <img src="Screenshots/new_transaction.png" width="300"> | **Новая транзакция**<br><br>Добавление операции: сумма, описание и переключатель «Это доход», кнопка сохранения. |
+
 
 ---
 
